@@ -5,27 +5,32 @@ class RiverPart {
   }
 
   draw(ctx) {
+    ctx.fillStyle = 'blue';
     ctx.fillRect(this.x, this.y, RiverPart.width, RiverPart.height);
   }
 }
-RiverPart.width = 10;
-RiverPart.height = 10;
+RiverPart.width = 50;
+RiverPart.height = 50;
 
 class River {
   constructor(ctx) {
     this.ctx = ctx;
+    this.riverParts = {};
     this.river = [];
   }
 
   create() {
     const y = River.getRandomIntInclusive(0, this.ctx.canvas.height - RiverPart.height);
-    let next = new RiverPart(0, y);
+    this.riverParts[`0|${y}`] = new RiverPart(0, y);
+    let next = new RiverPart(RiverPart.width, y);
 
     while ((next.x + RiverPart.width) < this.ctx.canvas.width) {
-      this.river.push(next);
+      this.riverParts[`${next.x}|${next.y}`] = next;
       const options = this.getValidPositions(next);
 
       if (!options.length) {
+        const finalPart = new RiverPart(next.x + RiverPart.width, next.y);
+        this.riverParts[`${finalPart.x}|${finalPart.y}`] = finalPart;
         break;
       }
 
@@ -34,42 +39,54 @@ class River {
       next = new RiverPart(nextPosition.x, nextPosition.y);
     }
 
+    const keys = Object.keys(this.riverParts);
+    this.river = [];
+
+    for (let i = 0; i < keys.length; i++) {
+      this.river.push(this.riverParts[keys[i]]);
+    }
+
     this.river.forEach(part => part.draw(this.ctx));
   }
 
   getValidPositions(rp) {
     const options = [];
 
+    if ((rp.x + (RiverPart.width * 2)) >= this.ctx.canvas.width) {
+      return options;
+    }
+
     if ((rp.x + RiverPart.width * 2) <= this.ctx.canvas.width) {
+      const x = rp.x + RiverPart.width;
       // can go right
-      options.push({
-        x: rp.x + RiverPart.width,
-        y: rp.y,
-      });
+      if (!this.riverParts[`${x}|${rp.y}`]) {
+        options.push({
+          x,
+          y: rp.y,
+        });
+      }
     }
 
     if ((rp.y + RiverPart.height * 2) <= this.ctx.canvas.height) {
+      const y = rp.y + RiverPart.height;
       // can go down
-      options.push({
-        x: rp.x,
-        y: rp.y + RiverPart.height,
-      });
-    }
-
-    if ((rp.x - RiverPart.width) >= 0) {
-      // can go left
-      options.push({
-        x: rp.x - RiverPart.width,
-        y: rp.y,
-      });
+      if (!this.riverParts[`${rp.x}|${y}`] && !this.riverParts[`${rp.x - RiverPart.width}|${y}`]) {
+        options.push({
+          x: rp.x,
+          y,
+        });
+      }
     }
 
     if ((rp.y - RiverPart.height) >= 0) {
+      const y = rp.y - RiverPart.height;
       // can go up
-      options.push({
-        x: rp.x,
-        y: rp.y - RiverPart.height,
-      });
+      if (!this.riverParts[`${rp.x}|${y}`] && !this.riverParts[`${rp.x - RiverPart.width}|${y}`]) {
+        options.push({
+          x: rp.x,
+          y,
+        });
+      }
     }
 
     return options;
