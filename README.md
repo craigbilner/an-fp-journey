@@ -2,7 +2,8 @@
 From Vanilla -> Typed -> Reactive -> FP -> Haskell
 
 The idea is to build a tower defence game and then refactor it progressively,
- layering concepts of modern front-end software design, tooling and that FP fad, to see what
+ layering concepts of modern front-end software design, tooling and that Functional Programming
+ (FP) fad, to see what
   they bring to the party and how they form a greater whole.
   
 At each step various developers may feel that the code base is in a desirable
@@ -12,20 +13,22 @@ step brings and gives us some pros and cons to discuss. Each step is designed
 to introduce a single concept so the journeyperson can see what we get from
 the final product rather than saying "x is far better than y".
   
-Intended features:
-
--[ ] Create river
--[ ] Add towers/weapons selection panel which can be dragged and dropped
--[ ] Add random ships which sail along river after game has been started
--[ ] Weapons fire at ships which are destroyed when their respective health
+  
+# The Game
+- [ ] Creates a river
+- [ ] Provides a towers/weapons selection panel where items can be dragged and
+dropped onto the landscape
+- [ ] Random ships sail along the river after the game has been started
+- [ ] Weapons fire at ships which are destroyed when their respective health
 meters have reduced to zero
--[ ] If all ships are destroyed user wins, if ship reaches end of river, user
+- [ ] If all ships are destroyed user wins, if ship reaches end of river, user
 loses
 
 # Step 1 - Vanilla OO no build
 
 Just get it done - throw some classes together, get it rendering stuff, 
-listen to events and run updates in a game loop.
+listen to events and run updates in a game loop. Code is largely written in a
+contrived way to demonstrate pain points and refactoring opportunities.
 
 # Step 2 - Add a build step
 
@@ -53,8 +56,9 @@ and updating when the browser is able to render the next frame.
 
 All these moving parts are hard to reason about, debug and maintain. If we
 can move them into a single stream of updates with a single model it will be
-easier to manage these moving parts. For this purpose we'll use
-[most](https://github.com/cujojs/most).
+easier to manage said moving parts. For this purpose we'll use
+[most](https://github.com/cujojs/most) to create a Functional Reactive Programming
+ (FRP) app.
 
 # Step 5 - Make it functional
 
@@ -62,7 +66,8 @@ The code base should be looking fairly good right now but we have some pain
 points that would be nice to clear up:
 
 * use of `new` which ties us into using a constructor making it more difficult
-to refactor code into a **Factory** pattern
+to refactor code into a **Factory** pattern and implies local instances/state
+which adds complexity.
 * use of `this`, is hard to reason about in JS land and makes refactoring and
 testing all the more difficult because of a concreate relationship to the given
 `this`.
@@ -89,17 +94,20 @@ TypeScript is also giving us lots of safety it doesn't enforce data flow.
 We'll now look at [Elm](http://elm-lang.org/) which will give us everything we
 have so far but nothing is optional. We are forced into writing pure code, contained
 side-effects, immutable data and strongly encouraged to annotate our types. The
-compiler errors are far superior to the JS options as of today (30/01/2017).
+compiler errors are far superior* to the JS options as of today (30/01/2017).
 Using The Elm Architecture (TEA) will also mandate how we write our program too,
 so no bike-shedding on where things go.
 
+* ok so x _is_ better than y here
+
 # Step 7 - Go all in on the Haskell
 
-Right, we now have an awesome robust app that we have full confidence in, however,
+Right, we now have an awesome, robust FRP app that we have full confidence in, however,
 if the game were to get even more complex it could be argued that Elm is a
 little too simple for our needs. While it takes a lot of cues from Haskell it
 is built as a "developer friendly language that's simple to use" and not just
-a hardcore FP language. In that respect it continues to diverge from Haskell.
+a hardcore FP language. In that respect it continues to diverge from Haskell and some
+ of it's more powerful features.
 
 If we need to spread our wings and make stronger use
 of polymorphic types and type classes we need to look elsewhere. We'll now take
@@ -107,5 +115,10 @@ a look at [PureScript](http://www.purescript.org/) and see what something closer
 to Haskell brings to the party. In theory it will reduce "boilerplate" code and
 should be nicer to use than [GHCJS](https://github.com/ghcjs/ghcjs) which is
 very immature in terms of front-end development and tooling. We may lose
-some performance and the nice Elm compiler but should demonstrate "front-end
+some performance and the nice Elm compiler but it should demonstrate "front-end
 Haskell".
+
+# The END
+
+Some sort of discussion on the talking points raised by each step and perhaps a list
+of Q&A that comes out of it.
