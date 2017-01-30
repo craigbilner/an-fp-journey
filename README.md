@@ -1,2 +1,1 @@
-# an-fp-journey
-From vanilla -> typed -> reactive -> FP -> Haskell
+# Step 1 - Vanilla OO no build
