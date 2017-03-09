@@ -16,7 +16,7 @@ class River {
   constructor(ctx) {
     this.ctx = ctx;
     this.riverParts = {};
-    this.river = [];
+    this.course = [];
   }
 
   create() {
@@ -40,13 +40,13 @@ class River {
     }
 
     const keys = Object.keys(this.riverParts);
-    this.river = [];
+    this.course = [];
 
     for (let i = 0; i < keys.length; i++) {
-      this.river.push(this.riverParts[keys[i]]);
+      this.course.push(this.riverParts[keys[i]]);
     }
 
-    this.river.forEach(part => part.draw(this.ctx));
+    this.course.forEach(part => part.draw(this.ctx));
   }
 
   getValidPositions(rp) {
